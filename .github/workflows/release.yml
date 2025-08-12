@@ -41,16 +41,31 @@ jobs:
       - name: Run Semantic Release
         id: semantic
         run: |
-          if semantic-release version --print | grep -q "No release will be made"; then
-            echo "released=false" >> $GITHUB_OUTPUT
-            echo "No new release needed"
+          echo "🚀 Running semantic-release..."
+
+          # Run semantic-release and capture output
+          if semantic-release version 2>&1 | tee /tmp/semantic-release.log; then
+            echo "✅ Semantic-release completed successfully"
+
+            # Check if a release was actually made by looking for version in git tags
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+            if [[ "$LATEST_TAG" != "none" ]]; then
+              VERSION=${LATEST_TAG#v}  # Remove 'v' prefix
+              echo "released=true" >> $GITHUB_OUTPUT
+              echo "version=$VERSION" >> $GITHUB_OUTPUT
+              echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+              echo "📦 Released version: $VERSION"
+            else
+              echo "released=false" >> $GITHUB_OUTPUT
+              echo "ℹ️ No release was made"
+            fi
           else
-            NEW_VERSION=$(semantic-release version --print)
-            echo "released=true" >> $GITHUB_OUTPUT
-            echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-            echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
-            semantic-release version
+            echo "❌ Semantic-release failed"
+            echo "released=false" >> $GITHUB_OUTPUT
           fi
+
+          echo "📋 Semantic-release log:"
+          cat /tmp/semantic-release.log || echo "No log available"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -88,16 +103,7 @@ jobs:
           path: dist/
 
       # Note: GitHub release is automatically created by semantic-release
-      # due to upload_to_vcs_release: true in pyproject.toml
-
-      - name: Upload artifacts to release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.semantic-release.outputs.tag }}
-          files: |
-            dist/*
+      # with upload_to_vcs_release = true in pyproject.toml
 
       # Optional: Publish to PyPI
       # Uncomment the following step and add PYPI_API_TOKEN secret to enable PyPI publishing
