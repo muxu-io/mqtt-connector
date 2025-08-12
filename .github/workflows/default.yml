@@ -59,20 +59,17 @@ jobs:
       matrix:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
-    services:
-      mosquitto:
-        image: eclipse-mosquitto:2.0
-        ports:
-          - 1883:1883
-        options: >-
-          --health-cmd="mosquitto_pub -h localhost -t test -m 'health check' || exit 1"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Start Mosquitto MQTT broker
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '2.0'
+          ports: '1883:1883'
+          config: ${{ github.workspace }}/.ci/mosquitto.conf
+          container-name: 'mosquitto'
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -85,17 +82,30 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Wait for MQTT broker
+      - name: Verify MQTT broker
         run: |
-          timeout 30 bash -c 'until nc -z localhost 1883; do sleep 1; done'
-          echo "MQTT broker is ready"
+          echo "🔍 Verifying MQTT broker is ready..."
+
+          # Check container status
+          echo "📋 Mosquitto container status:"
+          docker ps --filter "name=mosquitto" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+          # Wait for broker to be accessible
+          timeout 30 bash -c 'until nc -z localhost 1883; do echo "Waiting for MQTT broker..."; sleep 1; done'
+          echo "✅ MQTT broker is accessible on port 1883"
+
+          # Show some broker logs for debugging
+          echo "📋 Recent Mosquitto logs:"
+          docker logs --tail 10 mosquitto || echo "No logs available"
 
       - name: Test with pytest
         run: |
-          pytest -v --tb=short
+          echo "🧪 Starting pytest with timeout protection..."
+          timeout 600 pytest -v --tb=short --maxfail=5 -x
         env:
           MQTT_BROKER_HOST: localhost
           MQTT_BROKER_PORT: 1883
+          PYTEST_TIMEOUT: 30
 
   build:
     runs-on: ubuntu-latest
