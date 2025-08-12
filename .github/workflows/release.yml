@@ -87,26 +87,15 @@ jobs:
           name: python-package-distributions-${{ needs.semantic-release.outputs.version }}
           path: dist/
 
-      - name: Create GitHub Release
+      # Note: GitHub release is automatically created by semantic-release
+      # due to upload_to_vcs_release: true in pyproject.toml
+
+      - name: Upload artifacts to release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ needs.semantic-release.outputs.tag }}
-          name: Release ${{ needs.semantic-release.outputs.version }}
-          body: |
-            ## Changes in ${{ needs.semantic-release.outputs.version }}
-            
-            This release was automatically generated from conventional commits.
-            
-            ### Installation
-            ```bash
-            pip install mqtt-connector==${{ needs.semantic-release.outputs.version }}
-            ```
-            
-            See the [CHANGELOG](CHANGELOG.md) for detailed changes.
-          draft: false
-          prerelease: false
           files: |
             dist/*
 
