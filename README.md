@@ -1,6 +1,6 @@
 # MQTT Connector
 
-A robust MQTT connector for asynchronous MQTT communication
+A robust MQTT connector for asynchronous MQTT communication.
 
 ## Features
 
