@@ -43,7 +43,11 @@ jobs:
         run: |
           echo "🚀 Running semantic-release..."
 
-          # Run semantic-release and capture output
+          # Generate changelog first
+          echo "📝 Generating changelog..."
+          semantic-release changelog || echo "⚠️ Changelog generation failed or no changes"
+
+          # Run semantic-release version and capture output
           if semantic-release version 2>&1 | tee /tmp/semantic-release.log; then
             echo "✅ Semantic-release completed successfully"
 

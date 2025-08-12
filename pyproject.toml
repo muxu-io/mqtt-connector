@@ -44,11 +44,10 @@ dev = [
 version = {attr = "mqtt_connector.__version__"}
 
 [tool.semantic_release]
-version_toml = ["pyproject.toml:project.version"]
+version_variable = "src/mqtt_connector/__init__.py:__version__"
 build_command = "python -m build"
-dist_path = "dist/"
 upload_to_vcs_release = true
-commit_message = "chore(release): {version}"
+commit_message = "chore(release): {version}\n\n[skip ci]"
 
 [tool.semantic_release.branches.master]
 match = "master"
@@ -59,19 +58,17 @@ match = "maint"
 prerelease = false
 
 [tool.semantic_release.changelog]
-exclude_commit_patterns = [
-  "^chore",
-  "^ci",
-  "^docs",
-  "^style",
-  "^refactor",
-  "^test",
-  "Merge pull request",
-  "Merge branch",
-]
-
-[tool.semantic_release.changelog.default_templates]
 changelog_file = "CHANGELOG.md"
+exclude_commit_patterns = [
+  '''chore(?:\([^)]*?\))?: .+''',
+  '''ci(?:\([^)]*?\))?: .+''',
+  '''docs(?:\([^)]*?\))?: .+''',
+  '''style(?:\([^)]*?\))?: .+''',
+  '''refactor(?:\([^)]*?\))?: .+''',
+  '''test(?:\([^)]*?\))?: .+''',
+  '''Merge pull request.*''',
+  '''Merge branch.*''',
+]
 
 [tool.semantic_release.commit_parser_options]
 allowed_tags = [
