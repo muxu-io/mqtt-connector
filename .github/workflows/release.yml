@@ -88,16 +88,7 @@ jobs:
           path: dist/
 
       # Note: GitHub release is automatically created by semantic-release
-      # due to upload_to_vcs_release: true in pyproject.toml
-
-      - name: Upload artifacts to release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.semantic-release.outputs.tag }}
-          files: |
-            dist/*
+      # with upload_to_vcs_release = true in pyproject.toml
 
       # Optional: Publish to PyPI
       # Uncomment the following step and add PYPI_API_TOKEN secret to enable PyPI publishing
