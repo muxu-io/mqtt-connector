@@ -1,6 +1,7 @@
 """Tests for the MQTT connector module."""
 
 import asyncio
+import os
 import uuid
 
 import pytest
@@ -13,9 +14,14 @@ def mqtt_connector():
     """Create an MqttConnector instance for testing."""
     # Use a unique client ID to avoid conflicts
     unique_id = uuid.uuid4().hex[:8]
+
+    # Use environment variables for broker configuration (CI/local development)
+    mqtt_host = os.getenv("MQTT_BROKER_HOST", "test.mosquitto.org")
+    mqtt_port = int(os.getenv("MQTT_BROKER_PORT", "1883"))
+
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",  # Public test broker
-        mqtt_port=1883,
+        mqtt_broker=mqtt_host,
+        mqtt_port=mqtt_port,
         client_id=f"test_connector_{unique_id}",
         reconnect_interval=2,
         max_reconnect_attempts=3,
@@ -130,9 +136,14 @@ async def test_qos_publish(mqtt_connector):
 async def test_message_callback():
     """Test message callback functionality."""
     unique_id = uuid.uuid4().hex[:8]
+
+    # Use environment variables for broker configuration
+    mqtt_host = os.getenv("MQTT_BROKER_HOST", "test.mosquitto.org")
+    mqtt_port = int(os.getenv("MQTT_BROKER_PORT", "1883"))
+
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",
-        mqtt_port=1883,
+        mqtt_broker=mqtt_host,
+        mqtt_port=mqtt_port,
         client_id=f"callback_test_{unique_id}",
         throttle_interval=0.1,
     )
@@ -172,9 +183,13 @@ async def test_context_manager():
     """Test async context manager functionality."""
     unique_id = uuid.uuid4().hex[:8]
 
+    # Use environment variables for broker configuration
+    mqtt_host = os.getenv("MQTT_BROKER_HOST", "test.mosquitto.org")
+    mqtt_port = int(os.getenv("MQTT_BROKER_PORT", "1883"))
+
     async with MqttConnector(
-        mqtt_broker="test.mosquitto.org",
-        mqtt_port=1883,
+        mqtt_broker=mqtt_host,
+        mqtt_port=mqtt_port,
         client_id=f"ctx_test_{unique_id}",
     ) as connector:
         assert connector.is_connected() is True
@@ -191,9 +206,14 @@ async def test_context_manager():
 async def test_throttling():
     """Test message throttling functionality."""
     unique_id = uuid.uuid4().hex[:8]
+
+    # Use environment variables for broker configuration
+    mqtt_host = os.getenv("MQTT_BROKER_HOST", "test.mosquitto.org")
+    mqtt_port = int(os.getenv("MQTT_BROKER_PORT", "1883"))
+
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",
-        mqtt_port=1883,
+        mqtt_broker=mqtt_host,
+        mqtt_port=mqtt_port,
         client_id=f"throttle_test_{unique_id}",
         throttle_interval=0.5,  # 500ms throttling
     )
@@ -225,8 +245,11 @@ async def test_throttling():
 def ssl_auth_mqtt_connector():
     """Create an SSL + Auth MqttConnector instance for testing."""
     unique_id = uuid.uuid4().hex[:8]
+
+    # Always use external mosquitto test server for SSL tests
+    # This ensures SSL tests run even when using local broker for basic tests
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",
+        mqtt_broker="test.mosquitto.org",  # External SSL-enabled broker
         mqtt_port=8885,  # SSL + Auth port (encrypted and authenticated)
         client_id=f"ssl_auth_test_connector_{unique_id}",
         username="rw",  # Read-write user
@@ -241,6 +264,8 @@ def ssl_auth_mqtt_connector():
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_connect(ssl_auth_mqtt_connector):
     """Test SSL + authenticated connection to MQTT broker."""
     try:
@@ -252,6 +277,8 @@ async def test_ssl_auth_connect(ssl_auth_mqtt_connector):
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_publish(ssl_auth_mqtt_connector):
     """Test publishing with SSL + authentication."""
     try:
@@ -266,6 +293,8 @@ async def test_ssl_auth_publish(ssl_auth_mqtt_connector):
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_json_publish(ssl_auth_mqtt_connector):
     """Test publishing JSON with SSL + authentication."""
     try:
@@ -285,6 +314,8 @@ async def test_ssl_auth_json_publish(ssl_auth_mqtt_connector):
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_subscribe(ssl_auth_mqtt_connector):
     """Test subscribing with SSL + authentication."""
     try:
@@ -297,6 +328,8 @@ async def test_ssl_auth_subscribe(ssl_auth_mqtt_connector):
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_qos_publish(ssl_auth_mqtt_connector):
     """Test publishing with different QoS levels over SSL + Auth."""
     try:
@@ -320,12 +353,15 @@ async def test_ssl_auth_qos_publish(ssl_auth_mqtt_connector):
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_context_manager():
     """Test SSL + Auth with async context manager."""
     unique_id = uuid.uuid4().hex[:8]
 
+    # Always use external mosquitto test server for SSL tests
     async with MqttConnector(
-        mqtt_broker="test.mosquitto.org",
+        mqtt_broker="test.mosquitto.org",  # External SSL-enabled broker
         mqtt_port=8885,  # SSL + Auth port (encrypted and authenticated)
         client_id=f"ssl_auth_ctx_test_{unique_id}",
         username="rw",
@@ -351,11 +387,15 @@ async def test_ssl_auth_context_manager():
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_message_callback():
     """Test SSL + Auth message callback functionality."""
     unique_id = uuid.uuid4().hex[:8]
+
+    # Always use external mosquitto test server for SSL tests
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",
+        mqtt_broker="test.mosquitto.org",  # External SSL-enabled broker
         mqtt_port=8885,  # SSL + Auth port (encrypted and authenticated)
         client_id=f"ssl_auth_callback_test_{unique_id}",
         username="rw",
@@ -397,11 +437,15 @@ async def test_ssl_auth_message_callback():
 
 
 @pytest.mark.asyncio
+@pytest.mark.ssl
+@pytest.mark.external
 async def test_ssl_auth_failure():
     """Test that SSL + Auth fails with wrong credentials."""
     unique_id = uuid.uuid4().hex[:8]
+
+    # Always use external mosquitto test server for SSL tests
     connector = MqttConnector(
-        mqtt_broker="test.mosquitto.org",
+        mqtt_broker="test.mosquitto.org",  # External SSL-enabled broker
         mqtt_port=8885,  # SSL + Auth port (encrypted and authenticated)
         client_id=f"ssl_auth_fail_test_{unique_id}",
         username="wrong_user",
