@@ -1,0 +1,31 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+{% for version in context.history.unreleased + context.history.released %}
+{% if version.elements %}
+## {% if version.tagger %}[{{ version.tag }}]({{ context.repo_url }}/compare/{{ version.elements[0].commit.hexsha }}...{{ version.tag }}){% else %}[Unreleased]{% endif %} - {{ version.tagged_date.strftime('%Y-%m-%d') if version.tagged_date else 'TBD' }}
+
+{% for type, elements in version.elements | groupby('commit.type') %}
+{% set type_mapping = {
+    'feat': 'Added',
+    'fix': 'Fixed', 
+    'perf': 'Performance',
+    'docs': 'Documentation',
+    'style': 'Style',
+    'refactor': 'Refactored',
+    'test': 'Tests',
+    'build': 'Build',
+    'ci': 'CI'
+} %}
+### {{ type_mapping.get(type, type | title) }}
+
+{% for element in elements %}
+- {{ element.commit.message.split('\n')[0] | replace(element.commit.type + ':', '') | replace(element.commit.type + '(', '') | replace('):', ':') | trim }}{% if element.commit.breaking %} **BREAKING CHANGE**{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endfor %}
