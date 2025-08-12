@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - SSL/TLS support with client certificates
 - Message throttling functionality
 - Comprehensive test suite
+- CI/CD build and release pipeline
 
 ### Changed
 - Project structure with src/ layout
