@@ -1,0 +1,53 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+{% for version in context.history.released %}
+{% if version.elements %}
+## [{{ version.tag }}] - {{ version.tagged_date.strftime('%Y-%m-%d') }}
+
+{% for type, elements in version.elements | groupby('commit.type') %}
+{% if type == 'feat' %}
+### Added
+{% elif type == 'fix' %}
+### Fixed
+{% elif type == 'perf' %}
+### Performance
+{% else %}
+### {{ type | title }}
+{% endif %}
+
+{% for element in elements %}
+- {{ element.commit.message.split('\n')[0] | replace(element.commit.type + ':', '') | replace(element.commit.type + '(' + (element.commit.scope or '') + '):', '') | trim }}{% if element.commit.breaking %} **BREAKING CHANGE**{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+{% if context.history.unreleased %}
+{% for version in context.history.unreleased %}
+{% if version.elements %}
+## [Unreleased]
+
+{% for type, elements in version.elements | groupby('commit.type') %}
+{% if type == 'feat' %}
+### Added
+{% elif type == 'fix' %}
+### Fixed
+{% elif type == 'perf' %}
+### Performance
+{% else %}
+### {{ type | title }}
+{% endif %}
+
+{% for element in elements %}
+- {{ element.commit.message.split('\n')[0] | replace(element.commit.type + ':', '') | replace(element.commit.type + '(' + (element.commit.scope or '') + '):', '') | trim }}{% if element.commit.breaking %} **BREAKING CHANGE**{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
