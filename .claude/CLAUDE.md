@@ -41,7 +41,7 @@ pip install -e ".[dev]"
 
 # Or install specific dependencies
 pip install -e .
-pip install pytest pytest-asyncio black ruff build
+pip install pytest pytest-asyncio black ruff bandit[toml] pip-audit build
 ```
 
 ### Testing
@@ -78,7 +78,7 @@ ruff check .
 bandit -r src/
 
 # Check dependencies for known vulnerabilities
-safety check
+pip-audit
 
 # Scan for secrets and credentials
 trufflehog git file://. --only-verified
@@ -133,7 +133,7 @@ Triggers on pull requests to `master`, `main`, or `maint` branches and manual wo
    - **Black**: Checks code formatting with `--check --diff` (no auto-fixing)
    - **Ruff**: Lints code for style and error detection
    - **Bandit**: Scans for common security vulnerabilities in Python code
-   - **Safety**: Checks dependencies for known security vulnerabilities
+   - **pip-audit**: Checks dependencies for known security vulnerabilities
    - **TruffleHog**: Scans for exposed secrets and credentials in code and git history
    - Uses Python 3.11 for consistency
 
@@ -198,7 +198,7 @@ Required status checks for protected branches (`master`, `maint`):
    black .
    ruff check .
    bandit -r src/
-   safety check
+   pip-audit
    trufflehog git file://. --only-verified
    pytest
    
@@ -224,7 +224,7 @@ Required status checks for protected branches (`master`, `maint`):
    bandit -r src/
    
    # Check dependencies for vulnerabilities
-   safety check
+   pip-audit
    
    # Scan for exposed secrets
    trufflehog git file://. --only-verified
@@ -285,7 +285,7 @@ BREAKING CHANGE: Connection method signature has changed.
 **Security Scan Failures**:
 - Run `bandit -r src/ -v` for detailed vulnerability information
 - Review and fix security issues manually (never ignore without justification)
-- Run `safety check --full-report` to see detailed vulnerability reports
+- Run `pip-audit --format=json` to see detailed vulnerability reports
 - Update vulnerable dependencies: `pip install --upgrade package-name`
 
 **Secret Detection Failures**:
@@ -367,7 +367,7 @@ mqtt_port = int(os.getenv("MQTT_BROKER_PORT", "1883"))
 2. Add comprehensive tests in `tests/test_connector.py`
 3. Update documentation in `README.md`
 4. Use conventional commit format
-5. Run code quality checks: `black . && ruff check .`
+5. Run code quality and security checks: `black . && ruff check . && bandit -r src/ && pip-audit`
 6. Ensure all tests pass: `pytest`
 
 ## Repository Structure

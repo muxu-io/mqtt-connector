@@ -10,6 +10,11 @@ This file documents recommended next steps for standardizing CI/CD and repositor
 - Semantic versioning with automatic changelog generation
 - Renovate dependency management configuration
 - MQTT broker testing with Docker in CI
+- **✅ Security scanning suite integrated:**
+  - Bandit for Python security vulnerabilities
+  - pip-audit for dependency vulnerability scanning
+  - TruffleHog for secret detection
+  - Enhanced CI/CD pipeline with comprehensive security reporting
 
 ## Pending Repository Configuration
 
@@ -18,8 +23,8 @@ This file documents recommended next steps for standardizing CI/CD and repositor
 **Need to configure via GitHub UI or CLI for each repository:**
 
 Required status checks for `master` and `maint` branches:
-- `commitlint`
-- `code-quality`
+- `commit-check` (renamed from commitlint)
+- `code-quality` (includes security scanning: Bandit, pip-audit, TruffleHog)
 - `test (3.8, ubuntu-latest)`
 - `test (3.9, ubuntu-latest)`
 - `test (3.10, ubuntu-latest)`
@@ -31,7 +36,7 @@ Required status checks for `master` and `maint` branches:
 ```bash
 gh api repos/muxu-io/mqtt-connector/branches/master/protection \
   --method PUT \
-  --field required_status_checks='{"strict":true,"checks":[{"context":"commitlint"},{"context":"code-quality"},{"context":"test (3.8, ubuntu-latest)"},{"context":"test (3.9, ubuntu-latest)"},{"context":"test (3.10, ubuntu-latest)"},{"context":"test (3.11, ubuntu-latest)"},{"context":"test (3.12, ubuntu-latest)"},{"context":"build"}]}' \
+  --field required_status_checks='{"strict":true,"checks":[{"context":"commit-check"},{"context":"code-quality"},{"context":"test (3.8, ubuntu-latest)"},{"context":"test (3.9, ubuntu-latest)"},{"context":"test (3.10, ubuntu-latest)"},{"context":"test (3.11, ubuntu-latest)"},{"context":"test (3.12, ubuntu-latest)"},{"context":"build"}]}'' \
   --field enforce_admins=true \
   --field required_pull_request_reviews='{"required_approving_review_count":1}' \
   --field restrictions=null
@@ -74,7 +79,7 @@ for repo in "${REPOS[@]}"; do
   "required_status_checks": {
     "strict": true,
     "checks": [
-      {"context": "commitlint"},
+      {"context": "commit-check"},
       {"context": "code-quality"},
       {"context": "test (3.8, ubuntu-latest)"},
       {"context": "test (3.9, ubuntu-latest)"},
@@ -131,7 +136,7 @@ resource "github_branch_protection" "main" {
   required_status_checks {
     strict = true
     checks = [
-      "commitlint",
+      "commit-check",
       "code-quality", 
       "test (3.8, ubuntu-latest)",
       "test (3.9, ubuntu-latest)",
@@ -167,12 +172,13 @@ on:
 ## File Templates to Copy
 
 ### Essential Files for Each Repository:
-- `.github/workflows/default.yml` - CI workflow
+- `.github/workflows/default.yml` - CI workflow (with security scanning)
 - `.github/workflows/release.yml` - Release workflow
 - `.ci/mosquitto.conf` - MQTT broker config for testing
 - `.commitlintrc.json` - Commitlint configuration
 - `renovate.json` - Dependency management
-- `pyproject.toml` - Tool configurations (semantic-release, black, ruff, pytest)
+- `pyproject.toml` - Tool configurations (semantic-release, black, ruff, pytest, bandit)
+- `CONTRIBUTING.md` - Contributor guidelines with security practices
 
 ### Semantic Release Configuration:
 ```toml
@@ -205,7 +211,8 @@ changelog_file = "CHANGELOG.md"
 
 ### Immediate:
 1. [ ] Configure branch protection rules for mqtt-connector
-2. [ ] Test the complete CI/CD pipeline with a feature branch
+2. ✅ Test the complete CI/CD pipeline with security scanning
+3. [ ] Verify security scanning results and fix any issues
 
 ### Short-term:
 1. [ ] Apply same CI/CD setup to mqtt-logger
@@ -234,6 +241,36 @@ changelog_file = "CHANGELOG.md"
 - `test`: Test additions/modifications
 - `refactor`: Code refactoring
 
+## Security Enhancements Added
+
+### Implemented Security Scanning:
+1. **Bandit**: Static security analysis for Python code
+   - Scans for common security vulnerabilities (SQL injection, hardcoded secrets, etc.)
+   - Generates JSON reports with detailed findings
+   - Integrated into code-quality job
+
+2. **pip-audit**: Dependency vulnerability scanning
+   - Replaces deprecated Safety tool
+   - Checks all installed packages against known CVE database
+   - No authentication required, maintained by PyPA
+
+3. **TruffleHog**: Secret detection
+   - Scans entire repository for exposed credentials
+   - Uses `--only-verified` flag to reduce false positives
+   - Full repository scan (not differential)
+
+4. **Setuptools Security Fix**:
+   - Updated from vulnerable 65.5.0 to secure >=65.5.1
+   - Resolves PYSEC-2022-43012 and partially addresses PYSEC-2025-49
+   - Maintains Python 3.8+ compatibility
+
+### Security Workflow Integration:
+- Security scans run on every PR and push
+- JSON reports generated for automated processing
+- Human-readable fallback outputs
+- Non-blocking secret scanning with proper error handling
+- Comprehensive troubleshooting documentation
+
 ## Notes
 
 - All repositories should use Python 3.8+ (3.7 is EOL)
@@ -241,3 +278,6 @@ changelog_file = "CHANGELOG.md"
 - Semantic-release automatically manages versions, changelogs, and GitHub releases
 - Branch protection prevents merging until all CI checks pass
 - Renovate handles dependency updates with auto-merge for patches
+- **Security-first approach**: All security scans must pass before merge
+- **Zero tolerance for secrets**: TruffleHog failures must be investigated
+- **Dependency hygiene**: pip-audit ensures no known vulnerabilities in dependencies
