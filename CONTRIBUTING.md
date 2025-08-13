@@ -14,7 +14,7 @@ pip install -e ".[dev]"
 
 # Or install specific dependencies
 pip install -e .
-pip install pytest black ruff bandit[toml] safety build
+pip install pytest black ruff bandit[toml] pip-audit build
 ```
 
 ## Commit Message Convention
@@ -67,8 +67,8 @@ ruff check .
 # 3. Run security scan with Bandit
 bandit -r src/
 
-# 4. Check for known vulnerabilities with Safety
-safety check
+# 4. Check for known vulnerabilities with pip-audit
+pip-audit
 
 # 5. Scan for secrets with TruffleHog
 trufflehog git file://. --only-verified
@@ -83,7 +83,7 @@ pytest --cov=src --cov-report=html
 **Quick validation script:**
 ```bash
 # Run all pre-submission checks in sequence
-black . && ruff check . && bandit -r src/ && safety check && trufflehog git file://. --only-verified && pytest && echo "✅ Ready for submission!"
+black . && ruff check . && bandit -r src/ && pip-audit && trufflehog git file://. --only-verified && pytest && echo "✅ Ready for submission!"
 ```
 
 ## CI/CD Pipeline Overview
@@ -98,6 +98,7 @@ When you open a pull request, our CI/CD pipeline automatically runs several chec
    - Bandit security scanning for common vulnerabilities
    - Safety dependency vulnerability checks
    - TruffleHog secret scanning for exposed credentials
+   - pip-audit dependency vulnerability checks
 3. **Tests**: 
    - Matrix testing across Python versions
    - Comprehensive test suite execution
@@ -124,7 +125,7 @@ ruff check . --fix
 bandit -r src/ -v  # Verbose output for details
 
 # Dependency vulnerabilities (update dependencies)
-safety check --full-report
+pip-audit --format=json  # Detailed vulnerability report
 pip install --upgrade package-name
 
 # Secret detection (remove or secure secrets)
@@ -152,7 +153,7 @@ pytest -v  # Run locally to debug
 3. **Validate Locally:**
    ```bash
    # Run the pre-submission checklist above
-   black . && ruff check . && bandit -r src/ && safety check && trufflehog git file://. --only-verified && pytest
+   black . && ruff check . && bandit -r src/ && pip-audit && trufflehog git file://. --only-verified && pytest
    ```
 
 4. **Commit and Push:**
