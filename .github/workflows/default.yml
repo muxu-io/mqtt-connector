@@ -2,7 +2,7 @@ name: Default
 
 on:
   pull_request:
-    branches: [master, maint]
+    branches: [master, main, maint]
   workflow_dispatch:
 
 concurrency:
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  commitlint:
+  commit-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,13 +44,49 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install black ruff
+          pip install --upgrade "setuptools>=65.5.1"
+          pip install black ruff bandit[toml] pip-audit
 
       - name: Check code formatting with Black
         run: black --check --diff .
 
       - name: Lint with Ruff
         run: ruff check .
+
+      - name: Security scan with Bandit
+        run: bandit -r src/ -f json -o bandit-report.json || bandit -r src/
+
+      - name: Display Bandit security report
+        run: |
+          echo "📋 Bandit Security Scan Results:"
+          if [ -f bandit-report.json ]; then
+            cat bandit-report.json | jq . || cat bandit-report.json
+          else
+            echo "No bandit-report.json found - check previous step"
+          fi
+        continue-on-error: true
+
+      - name: Check for known vulnerabilities
+        run: |
+          echo "🔍 Scanning dependencies for known vulnerabilities..."
+
+          # Try pip-audit (free, no authentication required)
+          if command -v pip-audit >/dev/null 2>&1; then
+            echo "Using pip-audit for vulnerability scanning..."
+            pip-audit --format=json --output=vulnerability-report.json || pip-audit
+          else
+            # Install and use pip-audit
+            echo "Installing pip-audit..."
+            pip install pip-audit
+            pip-audit --format=json --output=vulnerability-report.json || pip-audit
+          fi
+
+      - name: Scan for secrets with TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ""
+          extra_args: --debug --only-verified
 
   test:
     runs-on: ubuntu-latest
