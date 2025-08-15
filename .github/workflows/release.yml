@@ -28,6 +28,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get Semantic Release App Actor ID
+        run: |
+          SEMANTIC_RELEASE_ACTOR_ID=$(gh api "users/semantic-release[bot]" --jq '.id')
+          echo "The actor_id for semantic-release[bot] is: $SEMANTIC_RELEASE_ACTOR_ID"
+          echo "SEMANTIC_RELEASE_ACTOR_ID=$SEMANTIC_RELEASE_ACTOR_ID" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
