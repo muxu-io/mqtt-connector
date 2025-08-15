@@ -26,7 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Note: this must be done differently in an organization account
+          # as we can bypass the specific actor_id
+          token: ${{ secrets.SEMANTIC_RELEASE_ADMIN_TOKEN }}
 
       - name: Get Semantic Release App Actor ID
         run: |
