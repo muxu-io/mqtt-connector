@@ -108,10 +108,9 @@ jobs:
       # Note: GitHub release is automatically created by semantic-release
       # with upload_to_vcs_release = true in pyproject.toml
 
-      # Optional: Publish to PyPI
-      # Uncomment the following step and add PYPI_API_TOKEN secret to enable PyPI publishing
-      # - name: Publish to PyPI
-      #   uses: pypa/gh-action-pypi-publish@release/v1
-      #   with:
-      #     password: ${{ secrets.PYPI_API_TOKEN }}
-      #     verbose: true
+      # Publish to PyPI using Trusted Publishers
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+          verbose: true
