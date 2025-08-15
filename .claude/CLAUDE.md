@@ -170,8 +170,9 @@ Triggers on pushes to `master`/`main`/`maint` branches and manual dispatch.
    - **Conditional Execution**: Only runs if `semantic-release.outputs.released == 'true'`
    - **Source Checkout**: Checks out specific release tag for consistency
    - **Package Building**: Creates wheel and sdist distributions
+   - **Package Verification**: Validates packages with `twine check`
    - **Artifact Upload**: Uploads with version-specific naming
-   - **PyPI Publishing**: Ready for PyPI deployment (commented out, requires `PYPI_API_TOKEN`)
+   - **PyPI Publishing**: Automatic deployment using GitHub Trusted Publishers (no API tokens required)
 
 ### Branch Protection Strategy
 
