@@ -6,6 +6,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v0.2.0 (2025-08-15)
+
+### Features
+
+- Use admin token for semantic release
+  ([`8ee4c6e`](https://github.com/muxu-io/mqtt-connector/commit/8ee4c6e63388ef9041e88aba6f9a73effc779d30))
+
+- Workflows: print actor_id for semantic release
+  ([`e6a6cff`](https://github.com/muxu-io/mqtt-connector/commit/e6a6cff690a90fd74c478b48fbc15730de5c5094))
+
+- Workflows: print actor_id for semantic release
+  ([`d5a858b`](https://github.com/muxu-io/mqtt-connector/commit/d5a858b7c3c47442b752017ec211b4f5c4dd6b9f))
+
+- Workflows: release: add pipy publishing
+  ([`484a2c3`](https://github.com/muxu-io/mqtt-connector/commit/484a2c385521ac054ab91774550eb92af2365f0d))
+
+
 ## v0.1.0 (2025-08-13)
 
 - Initial Release
