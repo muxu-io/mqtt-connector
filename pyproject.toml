@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "muxu-io-mqtt-connector"
-version = "1.0.2"
+version = "1.0.3"
 description = "A robust MQTT connector for asynchronous MQTT communication"
 readme = "README.md"
 authors = [
