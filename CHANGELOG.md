@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v0.3.0 (2025-08-16)
+
+### Features
+
+- Implement async callbacks
+  ([`093ccd1`](https://github.com/muxu-io/mqtt-connector/commit/093ccd1780e48dfdcc6a266ff8fd8430da04ba74))
+
+
 ## v0.2.1 (2025-08-15)
 
 ### Bug Fixes
