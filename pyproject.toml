@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "muxu-io-mqtt-connector"
-dynamic = ["version"]
+version = "0.2.2"
 description = "A robust MQTT connector for asynchronous MQTT communication"
 readme = "README.md"
 authors = [
@@ -40,56 +40,16 @@ dev = [
 "Repository" = "https://github.com/muxu-io/mqtt-connector"
 "Changelog" = "https://github.com/muxu-io/mqtt-connector/blob/master/CHANGELOG.md"
 
-[tool.setuptools.dynamic]
-version = {attr = "mqtt_connector.__version__"}
+# Version is now static in project.version above
 
 [tool.semantic_release]
-version_variable = "src/mqtt_connector/__init__.py:__version__"
+version_toml = ["pyproject.toml:project.version"]
 build_command = "python -m build"
+dist_path = "dist/"
 upload_to_vcs_release = true
-upload_to_repository = false
-commit_message = "chore(release): {version}\n\n[skip ci]"
-tag_format = "v{version}"
-allow_zero_version = true
-
-[tool.semantic_release.branches.master]
-match = "master"
-prerelease = false
-
-[tool.semantic_release.branches.maint]
-match = "maint"
-prerelease = false
-
-[tool.semantic_release.changelog]
-mode = "update"
-insertion_flag = "<!-- version list -->"
-exclude_commit_patterns = [
-  '''^chore(?:\([^)]*?\))?: .+''',
-  '''^ci(?:\([^)]*?\))?: .+''',
-  '''^docs(?:\([^)]*?\))?: .+''',
-  '''^style(?:\([^)]*?\))?: .+''',
-  '''^refactor(?:\([^)]*?\))?: .+''',
-  '''^test(?:\([^)]*?\))?: .+''',
-  '''Merge pull request.*''',
-  '''Merge branch.*''',
-]
-
-[tool.semantic_release.changelog.default_templates]
-changelog_file = "CHANGELOG.md"
 
 [tool.semantic_release.commit_parser_options]
-allowed_tags = [
-  "build",
-  "chore",
-  "ci",
-  "docs",
-  "feat",
-  "fix",
-  "perf",
-  "style",
-  "refactor",
-  "test",
-]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test"]
 minor_tags = ["feat"]
 patch_tags = ["fix", "perf"]
 
