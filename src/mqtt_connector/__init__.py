@@ -3,7 +3,12 @@
 
 from .connector import MqttConnector
 
-__version__ = "0.1.0"
+try:
+    import importlib.metadata
+
+    __version__ = importlib.metadata.version("muxu-io-mqtt-connector")
+except (importlib.metadata.PackageNotFoundError, ImportError):
+    __version__ = "unknown"
 __author__ = "Alex Gonzalez"
 __email__ = "alex@muxu.io"
 __description__ = "Low-level MQTT connection management"
