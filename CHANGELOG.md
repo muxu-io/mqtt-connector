@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.0.0 (2025-08-16)
+
+### Bug Fixes
+
+- Update the CI/CD workflows
+  ([`eb90695`](https://github.com/muxu-io/mqtt-connector/commit/eb906951d888f622d7d453dfd8ab85f7f7475049))
+
+
 ## v0.3.0 (2025-08-16)
 
 ### Features
