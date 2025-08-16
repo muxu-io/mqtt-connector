@@ -5,7 +5,7 @@ import json
 import threading
 import time
 import uuid
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Awaitable, Callable, Dict, Optional, Union
 
 import paho.mqtt.client as mqtt
 
@@ -81,6 +81,7 @@ class MqttConnector:
         # Message handling and callbacks
         self._last_publish_time = 0.0
         self._log_callback = None
+        self._message_callback = None
 
         # MQTT client - use VERSION2 callback API to avoid deprecation warning
         self.client = mqtt.Client(
@@ -154,6 +155,22 @@ class MqttConnector:
             callback (Callable[[str, str], None]): The callback function to handle log messages.
         """
         self._log_callback = callback
+
+    def _schedule_async_callback(self, topic: str, message: str) -> None:
+        """Schedule an async callback to run in the event loop thread-safely."""
+        try:
+            # Try to get the running event loop
+            loop = asyncio.get_running_loop()
+            # Use call_soon_threadsafe to schedule from Paho's background thread
+            loop.call_soon_threadsafe(
+                lambda: asyncio.create_task(self._message_callback(topic, message))
+            )
+        except RuntimeError:
+            # No running event loop - log error
+            self._log(
+                "ERROR",
+                f"Cannot execute async callback for topic {topic} - no running event loop",
+            )
 
     def _log(self, level: str, message: str) -> None:
         """Internal logging method that uses the callback if available and respects log_level"""
@@ -446,17 +463,31 @@ class MqttConnector:
 
         return success
 
-    def set_message_callback(self, callback: Callable[[str, str], None]) -> None:
+    def set_message_callback(
+        self,
+        callback: Union[
+            Callable[[str, str], None], Callable[[str, str], Awaitable[None]]
+        ],
+    ) -> None:
         """Set a callback function for handling received messages.
 
         Args:
-            callback (Callable[[str, str], None]): Callback function that takes (topic, message) as parameters.
+            callback: Callback function that takes (topic, message) as parameters.
+                     Can be either sync or async.
         """
+        self._message_callback = callback
 
         def on_message_wrapper(client, userdata, msg):
             try:
                 message = msg.payload.decode("utf-8")
-                callback(msg.topic, message)
+
+                # Check if callback is async and handle appropriately
+                import inspect
+
+                if inspect.iscoroutinefunction(callback):
+                    self._schedule_async_callback(msg.topic, message)
+                else:
+                    callback(msg.topic, message)
             except Exception as e:
                 self._log("ERROR", f"Error in message callback: {e}")
 
