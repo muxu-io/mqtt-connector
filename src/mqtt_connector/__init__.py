@@ -4,4 +4,9 @@
 from .connector import MqttConnector
 
 __version__ = "0.1.0"
-__all__ = ["MqttConnector"]
+__author__ = "Alex Gonzalez"
+__email__ = "alex@muxu.io"
+__description__ = "Low-level MQTT connection management"
+__license__ = "MIT"
+
+__all__ = ["MqttConnector", "__version__"]
