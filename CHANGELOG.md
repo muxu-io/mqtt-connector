@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.0.2 (2025-08-16)
+
+### Bug Fixes
+
+- Use version from pyproject
+  ([`fc4fdc4`](https://github.com/muxu-io/mqtt-connector/commit/fc4fdc4ebea23dcd973ab68d5b04f32507910fbc))
+
+
 ## v1.0.1 (2025-08-16)
 
 ### Bug Fixes
