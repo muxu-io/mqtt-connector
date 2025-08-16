@@ -261,6 +261,13 @@ class MqttConnector:
         if self.connected and not force_reconnect:
             return True
 
+        # Print version information on first connection
+        if not hasattr(self, "_version_logged"):
+            from . import __version__
+
+            self._log("INFO", f"MqttConnector v{__version__} initializing...")
+            self._version_logged = True
+
         attempts = 0
         while (
             self.max_reconnect_attempts == -1 or attempts < self.max_reconnect_attempts
