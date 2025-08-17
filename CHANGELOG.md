@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.3 (2025-08-17)
+
+### Bug Fixes
+
+- Rename CI job
+  ([`e0a82c7`](https://github.com/muxu-io/mqtt-connector/commit/e0a82c78a5d92972642abec7b9d4489bb74edf73))
+
+
 ## v1.1.2 (2025-08-17)
 
 ### Bug Fixes
