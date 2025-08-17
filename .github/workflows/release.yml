@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  release:
+    uses: muxu-io/python-template/.github/workflows/release.yml@master
+    secrets:
+      SEMANTIC_RELEASE_ADMIN_TOKEN: ${{ secrets.SEMANTIC_RELEASE_ADMIN_TOKEN }}
+
+  publish:
+    if: needs.release.outputs.released == 'true'
+    needs: [release]
+    uses: muxu-io/python-template/.github/workflows/publish.yml@master
