@@ -8,15 +8,12 @@
 # See: https://docs.pypi.org/trusted-publishers/
 
 name: PyPI Publish
-run-name: Publish ${{ inputs.version }}
+run-name: Publish ${{ github.ref_name }}
 
 on:
-  workflow_call:
-    inputs:
-      version:
-        description: 'Version being published'
-        required: true
-        type: string
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: read
