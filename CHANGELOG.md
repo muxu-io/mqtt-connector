@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.11 (2025-08-17)
+
+### Bug Fixes
+
+- **docs**: Remove .github/README.md
+  ([`f193d9c`](https://github.com/muxu-io/mqtt-connector/commit/f193d9ccf5cb0ab225cd5040249aae28a08c97ff))
+
+
 ## v1.1.10 (2025-08-17)
 
 ### Bug Fixes
