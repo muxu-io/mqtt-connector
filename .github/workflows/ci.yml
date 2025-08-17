@@ -1,5 +1,5 @@
 name: CI/CD
-run-name: ${{ github.event_name == 'pull_request' && 'Checks' || 'Release and Publish' }}
+run-name: ${{ github.event_name == 'pull_request' && 'Checks' || 'Release' }}
 on:
   push:
     branches: [master, main, 'maint/**']
@@ -32,4 +32,6 @@ jobs:
     if: github.event_name == 'push' && needs.release.outputs.released == 'true'
     needs: [release]
     uses: muxu-io/python-template/.github/workflows/publish.yml@master
+    with:
+      version: ${{ needs.release.outputs.version }}
 
