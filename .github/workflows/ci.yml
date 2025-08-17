@@ -16,7 +16,7 @@ jobs:
       python-versions: '["3.9", "3.10", "3.11", "3.12"]'
       source-directory: 'src/'
       enable-mqtt-broker: true
-      mqtt-config-path: '.ci/mosquitto.conf'
+      mqtt-config-path: '.github/mosquitto.conf'
 
   release:
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
