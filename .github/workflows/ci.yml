@@ -21,6 +21,9 @@ jobs:
       source-directory: 'src/'
       enable-mqtt-broker: true
       mqtt-config-path: '.github/mosquitto.conf'
+      dockerhub-username: ${{ vars.DOCKERHUB_USERNAME }}
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
   release:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/maint/')) && github.ref_type != 'tag' && github.event.head_commit.author.email != 'semantic-release'
