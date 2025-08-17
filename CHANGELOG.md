@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.6 (2025-08-17)
+
+### Bug Fixes
+
+- Remove end of file empty line
+  ([`9d75c68`](https://github.com/muxu-io/mqtt-connector/commit/9d75c684072153d721345962a12fc218198da06d))
+
+
 ## v1.1.5 (2025-08-17)
 
 ### Bug Fixes
