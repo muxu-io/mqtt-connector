@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.5 (2025-08-17)
+
+### Bug Fixes
+
+- Use local pypi publish workflow
+  ([`8416b96`](https://github.com/muxu-io/mqtt-connector/commit/8416b96cad41759357aee33ad2708dee06eed7ab))
+
+
 ## v1.1.4 (2025-08-17)
 
 ### Bug Fixes
