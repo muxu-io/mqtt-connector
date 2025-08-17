@@ -1,5 +1,8 @@
-name: CI
+name: CI/CD
+run-name: ${{ github.event_name == 'pull_request' && 'CI' || 'Release and Publish' }}
 on:
+  push:
+    branches: [master, main, 'maint/**']
   pull_request:
   workflow_dispatch:
 
@@ -17,4 +20,16 @@ jobs:
       source-directory: 'src/'
       enable-mqtt-broker: true
       mqtt-config-path: '.github/mosquitto.conf'
+
+  release:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/maint/'))
+    needs: checks
+    uses: muxu-io/python-template/.github/workflows/release.yml@master
+    secrets:
+      SEMANTIC_RELEASE_ADMIN_TOKEN: ${{ secrets.SEMANTIC_RELEASE_ADMIN_TOKEN }}
+
+  publish:
+    if: github.event_name == 'push' && needs.release.outputs.released == 'true'
+    needs: [checks, release]
+    uses: muxu-io/python-template/.github/workflows/publish.yml@master
 
