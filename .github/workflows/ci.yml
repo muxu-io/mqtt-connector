@@ -31,7 +31,7 @@ jobs:
   publish:
     if: github.event_name == 'push' && needs.release.outputs.released == 'true'
     needs: [release]
-    uses: muxu-io/python-template/.github/workflows/publish.yml@master
+    uses: ./.github/workflows/pypi-publish.yml
     with:
       version: ${{ needs.release.outputs.version }}
 
