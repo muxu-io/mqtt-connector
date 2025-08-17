@@ -1,0 +1,31 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  checks:
+    uses: muxu-io/python-template/.github/workflows/checks.yml@master
+    with:
+      python-versions: '["3.9", "3.10", "3.11", "3.12"]'
+      source-directory: 'src/'
+      enable-mqtt-broker: true
+      mqtt-config-path: '.ci/mosquitto.conf'
+
+  release:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: checks
+    uses: muxu-io/python-template/.github/workflows/release.yml@master
+    secrets:
+      SEMANTIC_RELEASE_ADMIN_TOKEN: ${{ secrets.SEMANTIC_RELEASE_ADMIN_TOKEN }}
+
+  publish:
+    if: needs.release.outputs.released == 'true'
+    needs: [checks, release]
+    uses: muxu-io/python-template/.github/workflows/publish.yml@master
