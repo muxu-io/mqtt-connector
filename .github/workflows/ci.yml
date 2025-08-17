@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   checks:
+    if: github.event_name == 'pull_request'
     uses: muxu-io/python-template/.github/workflows/checks.yml@master
     with:
       python-versions: '["3.9", "3.10", "3.11", "3.12"]'
@@ -22,14 +23,13 @@ jobs:
       mqtt-config-path: '.github/mosquitto.conf'
 
   release:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/maint/'))
-    needs: checks
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/maint/')) && github.ref_type != 'tag' && github.event.head_commit.author.email != 'semantic-release'
     uses: muxu-io/python-template/.github/workflows/release.yml@master
     secrets:
       SEMANTIC_RELEASE_ADMIN_TOKEN: ${{ secrets.SEMANTIC_RELEASE_ADMIN_TOKEN }}
 
   publish:
     if: github.event_name == 'push' && needs.release.outputs.released == 'true'
-    needs: [checks, release]
+    needs: [release]
     uses: muxu-io/python-template/.github/workflows/publish.yml@master
 
