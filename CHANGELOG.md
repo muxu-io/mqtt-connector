@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.9 (2025-08-17)
+
+### Bug Fixes
+
+- **ci**: Fix image attestation
+  ([`9655b1d`](https://github.com/muxu-io/mqtt-connector/commit/9655b1de1f462c389d84fe52cb0338aa2dd679da))
+
+
 ## v1.1.8 (2025-08-17)
 
 ### Bug Fixes
