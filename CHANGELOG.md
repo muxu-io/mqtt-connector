@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.10 (2025-08-17)
+
+### Bug Fixes
+
+- **ci**: Pass dockerhub credentials if available
+  ([`eb35a78`](https://github.com/muxu-io/mqtt-connector/commit/eb35a78df0feb52c1203fdf94269a41625f089be))
+
+
 ## v1.1.9 (2025-08-17)
 
 ### Bug Fixes
