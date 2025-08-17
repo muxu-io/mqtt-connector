@@ -6,6 +6,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.0 (2025-08-17)
+
+### Bug Fixes
+
+- Move ci configuration to .github
+  ([`f796ee5`](https://github.com/muxu-io/mqtt-connector/commit/f796ee57acfd62fce7f4aa233128a0e5ade8ba44))
+
+### Features
+
+- Use reusable workflows
+  ([`a3aa740`](https://github.com/muxu-io/mqtt-connector/commit/a3aa740777d97a8da8ffce65bad4c54e716d50f3))
+
+
 ## v1.0.3 (2025-08-16)
 
 ### Bug Fixes
