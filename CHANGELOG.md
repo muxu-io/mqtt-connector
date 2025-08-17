@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.4 (2025-08-17)
+
+### Bug Fixes
+
+- Add version to publish job
+  ([`df1408b`](https://github.com/muxu-io/mqtt-connector/commit/df1408bae5e133ff06e53f74b631101ae02cd30d))
+
+
 ## v1.1.3 (2025-08-17)
 
 ### Bug Fixes
