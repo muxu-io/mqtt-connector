@@ -6,6 +6,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 <!-- version list -->
 
+## v1.1.12 (2025-08-18)
+
+### Bug Fixes
+
+- **doc**: Formatting change to README
+  ([`91a44ad`](https://github.com/muxu-io/mqtt-connector/commit/91a44ad372329cbd3aa8816f0b5f79cd1be28b69))
+
+
 ## v1.1.11 (2025-08-17)
 
 ### Bug Fixes
